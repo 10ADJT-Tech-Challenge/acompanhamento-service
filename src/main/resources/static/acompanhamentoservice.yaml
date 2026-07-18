@@ -4,7 +4,7 @@ info:
   description: API do Módulo do Médico. Gerencia o catálogo de sinais vitais (com seus limites de referência embutidos) e os setups de acompanhamento.
   version: 1.3.0
 servers:
-  - url: http://localhost:8080/api/v1
+  - url: http://localhost:8080
     description: Servidor Local (Desenvolvimento)
 
 
@@ -19,7 +19,7 @@ paths:
   # ==========================================
   # CRUD: EVENTOS (Agora com os parâmetros de medição)
   # ==========================================
-  /eventos:
+  /api/v1/eventos:
     get:
       tags: [Eventos]
       summary: Lista todos os eventos base cadastrados
@@ -52,7 +52,7 @@ paths:
                 $ref: '#/components/schemas/Evento'
 
 
-  /eventos/{id}:
+  /api/v1/eventos/{id}:
     get:
       tags: [Eventos]
       summary: Busca um evento base pelo ID
@@ -119,7 +119,7 @@ paths:
   # ==========================================
   # CRUD: TRATAMENTOS E ASSOCIATIVA
   # ==========================================
-  /cids:
+  /api/v1/cids:
     get:
       tags:
         - Dominio
@@ -135,7 +135,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CID'
-  /tratamentos:
+  /api/v1/tratamentos:
     get:
       tags: [Tratamentos]
       summary: Lista todos os tratamentos cadastrados
@@ -169,7 +169,7 @@ paths:
                 $ref: '#/components/schemas/TratamentoResponse'
 
 
-  /tratamentos/{id}:
+  /api/v1/tratamentos/{id}:
     get:
       tags: [Tratamentos]
       summary: Busca um tratamento pelo ID
@@ -233,7 +233,7 @@ paths:
           description: Tratamento deletado com sucesso
 
 
-  /tratamentos/paciente/{cpf}:
+  /api/v1/tratamentos/paciente/{cpf}:
     get:
       tags: [Tratamentos]
       summary: Consulta o tratamento ativo de um paciente
