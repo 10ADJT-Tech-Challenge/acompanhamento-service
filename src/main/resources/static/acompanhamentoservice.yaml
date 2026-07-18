@@ -1,0 +1,438 @@
+openapi: 3.0.3
+info:
+  title: Acompanhamento Service API - Eventos com Valores de Referência
+  description: API do Módulo do Médico. Gerencia o catálogo de sinais vitais (com seus limites de referência embutidos) e os setups de acompanhamento.
+  version: 1.3.0
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Servidor Local (Desenvolvimento)
+
+
+tags:
+  - name: Eventos
+    description: CRUD do catálogo de sinais vitais e seus limites de referência
+  - name: Tratamentos
+    description: CRUD de ordens de acompanhamento
+
+
+paths:
+  # ==========================================
+  # CRUD: EVENTOS (Agora com os parâmetros de medição)
+  # ==========================================
+  /eventos:
+    get:
+      tags: [Eventos]
+      summary: Lista todos os eventos base cadastrados
+      operationId: listarEventos
+      responses:
+        '200':
+          description: Lista de eventos com seus valores de referência
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Evento'
+    post:
+      tags: [Eventos]
+      summary: Cadastra um novo evento com limites de referência
+      operationId: criarEvento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventoRequest'
+      responses:
+        '201':
+          description: Evento configurado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Evento'
+
+
+  /eventos/{id}:
+    get:
+      tags: [Eventos]
+      summary: Busca um evento base pelo ID
+      operationId: buscarEventoPorId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+      responses:
+        '200':
+          description: Dados do evento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Evento'
+        '404':
+          description: Evento não encontrado
+    put:
+      tags: [Eventos]
+      summary: Atualiza os limites ou dados de um evento
+      operationId: atualizarEvento
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventoRequest'
+      responses:
+        '200':
+          description: Evento atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Evento'
+    delete:
+      tags: [Eventos]
+      summary: Remove um evento base
+      operationId: deletarEvento
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+      responses:
+        '204':
+          description: Evento deletado com sucesso
+
+
+  # ==========================================
+  # CRUD: TRATAMENTOS E ASSOCIATIVA
+  # ==========================================
+  /cids:
+    get:
+      tags:
+        - Dominio
+      summary: Lista todos os CIDs cadastrados
+      description: Retorna a listagem completa da Classificação Internacional de Doenças disponível no sistema para vincular aos tratamentos.
+      operationId: listarCids
+      responses:
+        '200':
+          description: Lista de CIDs retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CID'
+  /tratamentos:
+    get:
+      tags: [Tratamentos]
+      summary: Lista todos os tratamentos cadastrados
+      operationId: listarTratamentos
+      responses:
+        '200':
+          description: Lista de tratamentos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TratamentoResponse'
+    post:
+      tags: [Tratamentos]
+      summary: Cadastra um novo setup de acompanhamento
+      description: Vincula o paciente aos IDs dos eventos pré-configurados.
+      operationId: criarTratamento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TratamentoRequest'
+      responses:
+        '201':
+          description: Tratamento criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TratamentoResponse'
+
+
+  /tratamentos/{id}:
+    get:
+      tags: [Tratamentos]
+      summary: Busca um tratamento pelo ID
+      operationId: buscarTratamentoPorId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+      responses:
+        '200':
+          description: Dados do tratamento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TratamentoResponse'
+        '404':
+          description: Tratamento não encontrado
+    put:
+      tags: [Tratamentos]
+      summary: Atualiza os eventos de um tratamento
+      operationId: atualizarTratamento
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TratamentoRequest'
+      responses:
+        '200':
+          description: Tratamento atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TratamentoResponse'
+    delete:
+      tags: [Tratamentos]
+      summary: Cancela/Remove um tratamento
+      operationId: deletarTratamento
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+      responses:
+        '204':
+          description: Tratamento deletado com sucesso
+
+
+  /tratamentos/paciente/{cpf}:
+    get:
+      tags: [Tratamentos]
+      summary: Consulta o tratamento ativo de um paciente
+      operationId: getTratamentoByPaciente
+      parameters:
+        - name: cpf
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "12345678900"
+      responses:
+        '200':
+          description: Sucesso ao retornar o tratamento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TratamentoResponse'
+
+
+components:
+  schemas:
+    CID:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+          description: Identificador único do CID no banco de dados
+        codigo:
+          type: string
+          description: Código oficial do CID-10
+          example: "E11"
+        descricao:
+          type: string
+          description: Nome ou descrição médica da patologia
+          example: "Diabetes mellitus não insulino-dependente"
+    EventoRequest:
+      type: object
+      required:
+        - nome
+        - valor_ref_min
+        - valor_ref_max
+        - unidade_medida
+      properties:
+        nome:
+          type: string
+          example: "Aferição de Glicose"
+        valor_ref_min:
+          type: number
+          format: float
+          description: Valor de referência mínimo aceitável
+          example: 70.0
+        valor_ref_max:
+          type: number
+          format: float
+          description: Valor de referência máximo aceitável
+          example: 99.0
+        unidade_medida:
+          type: string
+          description: "Unidade de medida do evento (ex: mg/dL, mmHg, bpm)"
+          example: "mg/dL"
+          enum:
+            - BPM
+            - MMHG
+            - IRPM
+            - CELSIUS
+            - FAHRENHEIT
+            - PORCENTAGEM
+            - MG_DL
+            - MMOL_L
+            - KG
+            - CM
+            - ESCALA
+            - OUTROS
+    Evento:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        nome:
+          type: string
+          example: "Aferição de Glicose"
+        valor_ref_min:
+          type: number
+          format: float
+          description: Valor de referência mínimo padrão
+          example: 70.0
+        valor_ref_max:
+          type: number
+          format: float
+          description: Valor de referência máximo padrão
+          example: 99.0
+
+
+    EventoTratamentoSetup:
+      type: object
+      required:
+        - id_evento
+        - frequencia_horas
+      properties:
+        id_evento:
+          type: integer
+          description: ID do evento base no catálogo
+          example: 2
+        frequencia_horas:
+          type: integer
+          description: Intervalo em horas que o paciente deve realizar a medição
+          example: 8
+
+
+    # Schema de resposta da tabela associativa
+    EventoTratamentoResponse:
+      type: object
+      properties:
+        id_tratamento_evento:
+          type: integer
+          description: ID gerado na tabela associativa
+          example: 501
+        frequencia_horas:
+          type: integer
+          description: Intervalo configurado para este paciente
+          example: 8
+        evento:
+          $ref: '#/components/schemas/Evento'
+
+
+    TratamentoRequest:
+      type: object
+      required:
+        - cpf_paciente
+        - crm_medico
+        - id_cid
+        - data_final
+        - eventos_configurados
+      properties:
+        cpf_paciente:
+          type: string
+          example: "12345678900"
+        crm_medico:
+          type: string
+          example: "CRM-SP-123456"
+        id_cid:
+          type: string
+          format: uuid
+          example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        descricao_medico:
+          type: string
+          example: "Monitoramento diário de glicose."
+        data_final:
+          type: string
+          format: date
+          example: "2026-08-07"
+        eventos_configurados:
+          type: array
+          description: Lista de eventos associados ao tratamento com suas periodicidades
+          items:
+            $ref: '#/components/schemas/EventoTratamentoSetup'
+
+
+    TratamentoResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        cpf_paciente:
+          type: string
+          example: "12345678900"
+        crm_medico:
+          type: string
+          example: "CRM-SP-123456"
+        cid:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+            codigo:
+              type: string
+              example: "E11"
+            descricao:
+              type: string
+              example: "Diabetes mellitus não insulino-dependente"
+        descricao_medico:
+          type: string
+          example: "Monitoramento diário de glicose."
+        data_final:
+          type: string
+          format: date
+          example: "2026-08-07"
+        eventos_configurados:
+          type: array
+          description: Retorna os eventos bases juntamente com a periodicidade configurada para o tratamento
+          items:
+            $ref: '#/components/schemas/EventoTratamentoResponse'
+
