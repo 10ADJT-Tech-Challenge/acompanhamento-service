@@ -1,5 +1,7 @@
 package com.adjt.acompanhamentoservice.entity;
 
+import com.adjt.acompanhamentoservice.dto.generated.model.TratamentoRequest;
+import com.adjt.acompanhamentoservice.dto.generated.model.TratamentoResponse;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -63,5 +65,38 @@ public class Tratamento {
     @Override
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
+
+    public TratamentoResponse toTratamentoDTO() {
+        return new TratamentoResponse()
+                .id(getId())
+                .cpfPaciente(getCpfPaciente())
+                .crmMedico(getCrmMedico())
+                .descricaoMedico(getDescricao())
+                .dataFinal(getDataFim())
+                .cid(getCid().toCidDTO())
+                .eventosConfigurados(getEventos().stream()
+                        .map(TratamentoEvento::toEventoDTO)
+                        .toList()
+                );
+    }
+
+
+    public static Tratamento toEntity(TratamentoRequest tratamentoRequest,  Cid cid) {
+        return toEntity(UUID.randomUUID(), tratamentoRequest, cid, LocalDate.now(), new ArrayList<>());
+    }
+
+    public static Tratamento toEntity(UUID id, TratamentoRequest tratamentoRequest,
+                                      Cid cid, LocalDate dataInicio, List<TratamentoEvento> eventos) {
+        return new Tratamento(
+                id,
+                tratamentoRequest.getCpfPaciente(),
+                tratamentoRequest.getCrmMedico(),
+                cid,
+                tratamentoRequest.getDescricaoMedico(),
+                dataInicio,
+                tratamentoRequest.getDataFinal(),
+                eventos
+        );
     }
 }

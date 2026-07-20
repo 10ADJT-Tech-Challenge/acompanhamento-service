@@ -3,8 +3,6 @@ package com.adjt.acompanhamentoservice.controller;
 import com.adjt.acompanhamentoservice.dto.generated.EventosApi;
 import com.adjt.acompanhamentoservice.dto.generated.model.Evento;
 import com.adjt.acompanhamentoservice.dto.generated.model.EventoRequest;
-import com.adjt.acompanhamentoservice.entity.EventoMedicao;
-import com.adjt.acompanhamentoservice.entity.UnidadeMedida;
 import com.adjt.acompanhamentoservice.services.EventoMedicaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,47 +21,32 @@ public class EventosController implements EventosApi {
 
     @Override
     public ResponseEntity<Evento> atualizarEvento(UUID id, EventoRequest eventoRequest) {
-        return null;
+        Evento evento = eventoMedicaoService.atualizar(id, eventoRequest);
+        return ResponseEntity.ok(evento);
     }
 
     @Override
     public ResponseEntity<Evento> buscarEventoPorId(UUID id) {
-        return null;
+        Evento evento = eventoMedicaoService.buscarPorId(id);
+        return ResponseEntity.ok(evento);
     }
 
     @Override
     public ResponseEntity<Evento> criarEvento(EventoRequest eventoRequest) {
-        EventoMedicao evento = eventoMedicaoService.criar(new EventoMedicao(
-                UUID.randomUUID(),
-                eventoRequest.getNome(),
-                UnidadeMedida.fromSimbolo(eventoRequest.getUnidadeMedida().getValue()),
-                eventoRequest.getValorRefMax(),
-                eventoRequest.getValorRefMin()
-        ));
+        Evento evento = eventoMedicaoService.criar(eventoRequest);
 
-        return ResponseEntity.status(CREATED).body(toEventoDTO(evento));
+        return ResponseEntity.status(CREATED).body(evento);
     }
 
     @Override
     public ResponseEntity<Void> deletarEvento(UUID id) {
-        return null;
+        eventoMedicaoService.deletar(id);
+        return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<List<Evento>> listarEventos() {
-        List<Evento> eventos = eventoMedicaoService.buscarTodos().stream()
-                .map(this::toEventoDTO)
-                .toList();
-
+        List<Evento> eventos = eventoMedicaoService.buscarTodos();
         return ResponseEntity.ok(eventos);
-
-    }
-
-    private Evento toEventoDTO(EventoMedicao eventoMedicao) {
-        return new Evento()
-                .id(eventoMedicao.getId())
-                .nome(eventoMedicao.getNome())
-                .valorRefMax(eventoMedicao.getReferenciaMaxima())
-                .valorRefMin(eventoMedicao.getReferenciaMinima());
     }
 }

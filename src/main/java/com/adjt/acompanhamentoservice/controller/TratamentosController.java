@@ -3,41 +3,55 @@ package com.adjt.acompanhamentoservice.controller;
 import com.adjt.acompanhamentoservice.dto.generated.TratamentosApi;
 import com.adjt.acompanhamentoservice.dto.generated.model.TratamentoRequest;
 import com.adjt.acompanhamentoservice.dto.generated.model.TratamentoResponse;
+import com.adjt.acompanhamentoservice.services.TratamentoService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
 
+import static org.springframework.http.HttpStatus.CREATED;
+
 @RestController
+@RequiredArgsConstructor
 public class TratamentosController implements TratamentosApi {
+
+    private final TratamentoService tratamentoService;
+
+    @Override
+    public ResponseEntity<TratamentoResponse> criarTratamento(TratamentoRequest tratamentoRequest) {
+        TratamentoResponse tratamento = tratamentoService.criar(tratamentoRequest);
+        return ResponseEntity.status(CREATED).body(tratamento);
+    }
+
     @Override
     public ResponseEntity<TratamentoResponse> atualizarTratamento(UUID id, TratamentoRequest tratamentoRequest) {
-        return null;
+        TratamentoResponse tratamento = tratamentoService.atualizar(id, tratamentoRequest);
+        return ResponseEntity.ok(tratamento);
     }
 
     @Override
     public ResponseEntity<TratamentoResponse> buscarTratamentoPorId(UUID id) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<TratamentoResponse> criarTratamento(TratamentoRequest tratamentoRequest) {
-        return null;
+        TratamentoResponse tratamento = tratamentoService.buscarPorId(id);
+        return ResponseEntity.ok(tratamento);
     }
 
     @Override
     public ResponseEntity<Void> deletarTratamento(UUID id) {
-        return null;
+        tratamentoService.deletar(id);
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public ResponseEntity<TratamentoResponse> getTratamentoByPaciente(String cpf) {
-        return null;
+    public ResponseEntity<List<TratamentoResponse>> getTratamentoByPaciente(String cpf) {
+        List<TratamentoResponse> tratamentoResponses = tratamentoService.buscarTratamentosPorPaciente(cpf);
+        return ResponseEntity.ok(tratamentoResponses);
     }
 
     @Override
     public ResponseEntity<List<TratamentoResponse>> listarTratamentos() {
-        return null;
+        List<TratamentoResponse> tratamentos = tratamentoService.buscarTodos();
+        return ResponseEntity.ok(tratamentos);
     }
 }

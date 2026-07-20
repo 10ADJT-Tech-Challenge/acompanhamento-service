@@ -1,5 +1,7 @@
 package com.adjt.acompanhamentoservice.entity;
 
+import com.adjt.acompanhamentoservice.dto.generated.model.Evento;
+import com.adjt.acompanhamentoservice.dto.generated.model.EventoRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -48,5 +50,27 @@ public class EventoMedicao {
     @Override
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
+
+    public Evento toEventoDTO() {
+        return new Evento()
+                .id(getId())
+                .nome(getNome())
+                .valorRefMax(getReferenciaMaxima())
+                .valorRefMin(getReferenciaMinima());
+    }
+
+    public static EventoMedicao toEntity(EventoRequest eventoRequest) {
+        return toEntity(UUID.randomUUID(), eventoRequest);
+    }
+
+    public static EventoMedicao toEntity(UUID id, EventoRequest eventoRequest) {
+        return new EventoMedicao(
+                id,
+                eventoRequest.getNome(),
+                UnidadeMedida.fromSimbolo(eventoRequest.getUnidadeMedida().getValue()),
+                eventoRequest.getValorRefMax(),
+                eventoRequest.getValorRefMin()
+        );
     }
 }

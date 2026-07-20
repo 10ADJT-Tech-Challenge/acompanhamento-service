@@ -1,5 +1,6 @@
 package com.adjt.acompanhamentoservice.entity;
 
+import com.adjt.acompanhamentoservice.dto.generated.model.EventoTratamentoResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,4 +28,10 @@ public class TratamentoEvento {
 
     @Column(name = "frequencia_horas", nullable = false)
     private Integer frequenciaHoras; // Ex: Medir a cada 8 horas
+
+    public EventoTratamentoResponse toEventoDTO() {
+        return new EventoTratamentoResponse().idTratamentoEvento(getId())
+                .frequenciaHoras(getFrequenciaHoras())
+                .evento(getEventoMedicao().toEventoDTO());
+    }
 }

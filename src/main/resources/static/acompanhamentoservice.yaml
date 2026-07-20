@@ -251,7 +251,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TratamentoResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/TratamentoResponse'
 
 
 components:
@@ -339,9 +341,10 @@ components:
         - frequencia_horas
       properties:
         id_evento:
-          type: integer
+          type: string
+          format: uuid
+          example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
           description: ID do evento base no catálogo
-          example: 2
         frequencia_horas:
           type: integer
           description: Intervalo em horas que o paciente deve realizar a medição
@@ -353,9 +356,10 @@ components:
       type: object
       properties:
         id_tratamento_evento:
-          type: integer
+          type: string
+          format: uuid
+          example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
           description: ID gerado na tabela associativa
-          example: 501
         frequencia_horas:
           type: integer
           description: Intervalo configurado para este paciente

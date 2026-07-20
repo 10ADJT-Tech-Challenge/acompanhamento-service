@@ -1,5 +1,6 @@
 package com.adjt.acompanhamentoservice.entity;
 
+import com.adjt.acompanhamentoservice.dto.generated.model.TratamentoResponseCid;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -41,5 +42,12 @@ public class Cid {
     @Override
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
+
+    public TratamentoResponseCid toCidDTO() {
+        return new TratamentoResponseCid()
+                .id(getId())
+                .codigo(getCodigo())
+                .descricao(getDescricao());
     }
 }
