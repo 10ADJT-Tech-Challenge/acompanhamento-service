@@ -1,6 +1,7 @@
 package com.adjt.acompanhamentoservice.controller;
 
 import com.adjt.acompanhamentoservice.dto.generated.TratamentosApi;
+import com.adjt.acompanhamentoservice.dto.generated.model.EventoTratamentoResponse;
 import com.adjt.acompanhamentoservice.dto.generated.model.TratamentoRequest;
 import com.adjt.acompanhamentoservice.dto.generated.model.TratamentoResponse;
 import com.adjt.acompanhamentoservice.services.TratamentoService;
@@ -47,6 +48,12 @@ public class TratamentosController implements TratamentosApi {
     public ResponseEntity<List<TratamentoResponse>> getTratamentoByPaciente(String cpf) {
         List<TratamentoResponse> tratamentoResponses = tratamentoService.buscarTratamentosPorPaciente(cpf);
         return ResponseEntity.ok(tratamentoResponses);
+    }
+
+    @Override
+    public ResponseEntity<EventoTratamentoResponse> getTratamentoEvento(UUID id) {
+        EventoTratamentoResponse eventoTratamentoResponse = tratamentoService.buscarEventoTratamento(id);
+        return ResponseEntity.ok(eventoTratamentoResponse);
     }
 
     @Override

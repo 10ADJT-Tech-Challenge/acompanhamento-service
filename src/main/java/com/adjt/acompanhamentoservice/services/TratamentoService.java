@@ -1,5 +1,6 @@
 package com.adjt.acompanhamentoservice.services;
 
+import com.adjt.acompanhamentoservice.dto.generated.model.EventoTratamentoResponse;
 import com.adjt.acompanhamentoservice.dto.generated.model.EventoTratamentoSetup;
 import com.adjt.acompanhamentoservice.dto.generated.model.TratamentoRequest;
 import com.adjt.acompanhamentoservice.dto.generated.model.TratamentoResponse;
@@ -7,6 +8,7 @@ import com.adjt.acompanhamentoservice.entity.Cid;
 import com.adjt.acompanhamentoservice.entity.EventoMedicao;
 import com.adjt.acompanhamentoservice.entity.Tratamento;
 import com.adjt.acompanhamentoservice.entity.TratamentoEvento;
+import com.adjt.acompanhamentoservice.persistence.TratamentoEventoRepository;
 import com.adjt.acompanhamentoservice.persistence.TratamentoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TratamentoService {
     private final TratamentoRepository tratamentoRepository;
+    private final TratamentoEventoRepository tratamentoEventoRepository;
     private final CidService cidService;
     private final EventoMedicaoService eventoMedicaoService;
 
@@ -75,6 +78,15 @@ public class TratamentoService {
         return  tratamentoRepository.findByCpfPaciente(cpf).stream()
                 .map(Tratamento::toTratamentoDTO)
                 .toList();
+    }
+
+    public EventoTratamentoResponse buscarEventoTratamento(UUID id) {
+        return buscaTratamentoEventoEntidadePorId(id).toEventoDTO();
+    }
+
+    private TratamentoEvento buscaTratamentoEventoEntidadePorId(UUID id) {
+        return tratamentoEventoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("TratamentoEvento não encontrado com o id: " + id));
     }
 
     private Tratamento buscarEntidadePorId(UUID id) {

@@ -255,6 +255,26 @@ paths:
                 items:
                   $ref: '#/components/schemas/TratamentoResponse'
 
+  /api/v1/tratamentos/tratamento-evento/{id}:
+    get:
+      tags: [ Tratamentos ]
+      summary: Consulta o tratamento evento
+      operationId: getTratamentoEvento
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+      responses:
+        '200':
+          description: Sucesso ao retornar o tratamento evento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventoTratamentoResponse'
 
 components:
   schemas:
