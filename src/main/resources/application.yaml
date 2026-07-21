@@ -1,9 +1,6 @@
-server:
-  port: 8080 # trocar por property de ambiente
-
 spring:
   application:
-    name: acompanhamentoservice
+    name: acompanhamento-service
 
   datasource:
     url: jdbc:postgresql://${DB_HOST_ACOMPANHAMENTO:localhost}:${DB_PORT_ACOMPANHAMENTO:5432}/${DB_NAME_ACOMPANHAMENTO:acompanhamento-service}
